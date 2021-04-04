@@ -2,7 +2,8 @@ const User = require("../models/User");
 const { genSaltSync, hashSync } = require("bcrypt");
 
 const getUserById = (req, res) => {
-  User.findOne({ _id: req.params.userId })
+
+  User.findOne({ _id: req.body.userId })
     .then((user) => {
       user.password = undefined;
       res.status(200).json({

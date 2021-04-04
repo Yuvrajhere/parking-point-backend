@@ -11,13 +11,12 @@ const signin = (req, res) => {
       message: "Please provide email and password.",
     });
   }
-  console.log(body);
   User.findOne({ email: body.email }, function (err, user) {
     if (err) {
       console.log(err);
       return res.status(500).json({
         success: false,
-        message: "Internal Server error!",
+        message: "Internal Server error!, Please try after some time!",
       });
     }
     if (!user) {
@@ -30,13 +29,12 @@ const signin = (req, res) => {
     const result = compareSync(body.password, user.password);
 
     if (result) {
-      user.password = undefined;
-      const jsonwebtoken = sign({ id: user.id,  }, process.env.SECRET, {
+      const jsonwebtoken = sign({ id: user._id,  }, process.env.SECRET, {
         expiresIn: "1h",
       });
-      return res.json({
+      return res.status(200).json({
         success: true,
-        message: "login successfull!",
+        message: "Login successfull!",
         token: jsonwebtoken,
       });
     } else {
@@ -75,8 +73,7 @@ const adminSignin = (req, res) => {
     const result = compareSync(body.password, admin.password);
 
     if (result) {
-      admin.password = undefined;
-      const jsonwebtoken = sign({ id: admin.id, isAdmin: true }, process.env.SECRET, {
+      const jsonwebtoken = sign({ id: admin._id, isAdmin: true }, process.env.SECRET, {
         expiresIn: "1h",
       });
       return res.json({
@@ -93,29 +90,31 @@ const adminSignin = (req, res) => {
   });
 };
 
-// const checkToken = (req, res, next) => {
-//   let header = req.get("authorization");
-//   // console.log(header);
-//   if (header) {
-//     var token = header.split(" ")[1];
-//     // console.log(token);
-//     verify(token, process.env.SECRET, (err, decoded) => {
-//       if(err) {
-//         res.json({
-//           success: false,
-//           message: err.message
-//         })
-//       } else {
-//         next();
-//       }
-//     });
-//   } else {
-//     return res.json({
-//       success: false,
-//       message: "Access denied! Unauthorized user",
-//     });
-//   }
-// };
+const checkToken = (req, res, next) => {
+  let header = req.get("authorization");
+  // console.log(header);
+  if (header) {
+    var token = header.split(" ")[1];
+    // console.log(token);
+    verify(token, process.env.SECRET, (err, decoded) => {
+      if(err) {
+        console.log(err)
+        res.json({
+          success: false,
+          message: err.message
+        })
+      } else {
+        req.body.userId = decoded.id
+        next();
+      }
+    });
+  } else {
+    return res.json({
+      success: false,
+      message: "Access denied! Unauthorized user",
+    });
+  }
+};
 
 // const isAdmin = (req, res, next) => {
 //   let header = req.get("authorization");
@@ -145,6 +144,6 @@ const adminSignin = (req, res) => {
 module.exports = {
   signin,
   adminSignin,
-  // checkToken,
+  checkToken,
   // isAdmin,
 };
