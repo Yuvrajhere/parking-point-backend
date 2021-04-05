@@ -29,7 +29,7 @@ const signin = (req, res) => {
     const result = compareSync(body.password, user.password);
 
     if (result) {
-      const jsonwebtoken = sign({ id: user._id,  }, process.env.SECRET, {
+      const jsonwebtoken = sign({ id: user._id }, process.env.SECRET, {
         expiresIn: "1h",
       });
       return res.status(200).json({
@@ -73,9 +73,13 @@ const adminSignin = (req, res) => {
     const result = compareSync(body.password, admin.password);
 
     if (result) {
-      const jsonwebtoken = sign({ id: admin._id, isAdmin: true }, process.env.SECRET, {
-        expiresIn: "1h",
-      });
+      const jsonwebtoken = sign(
+        { id: admin._id, isAdmin: true },
+        process.env.SECRET,
+        {
+          expiresIn: "1h",
+        }
+      );
       return res.json({
         success: true,
         message: "admin signin successfull.",
@@ -97,14 +101,21 @@ const checkToken = (req, res, next) => {
     var token = header.split(" ")[1];
     // console.log(token);
     verify(token, process.env.SECRET, (err, decoded) => {
-      if(err) {
-        console.log(err)
-        res.json({
+      if (err) {
+        console.log("ERROR IN CHECK_TOKEN ", err);
+        if (err.name == "TokenExpiredError") {
+          return res.status(401).json({
+            success: false,
+            message: "Session Expired, Please Login again!",
+            isTokenExpired: true,
+          });
+        }
+        res.status(500).json({
           success: false,
-          message: err.message
-        })
+          message: err.message,
+        });
       } else {
-        req.body.userId = decoded.id
+        req.body.userId = decoded.id;
         next();
       }
     });
