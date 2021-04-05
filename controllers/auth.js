@@ -54,7 +54,6 @@ const adminSignin = (req, res) => {
       message: "Please provide email and password.",
     });
   }
-  console.log(body);
   Admin.findOne({ email: body.email }, function (err, admin) {
     if (err) {
       console.log(err);
@@ -66,7 +65,7 @@ const adminSignin = (req, res) => {
     if (!admin) {
       return res.status(400).json({
         success: false,
-        message: "Invalid email or password",
+        message: "Invalid email or password!",
       });
     }
 
@@ -80,13 +79,13 @@ const adminSignin = (req, res) => {
           expiresIn: "1h",
         }
       );
-      return res.json({
+      return res.status(200).json({
         success: true,
-        message: "admin signin successfull.",
+        message: "admin signin successful!.",
         token: jsonwebtoken,
       });
     } else {
-      return res.json({
+      return res.status(400).json({
         success: false,
         message: "Invalid email or password",
       });
@@ -96,10 +95,8 @@ const adminSignin = (req, res) => {
 
 const checkToken = (req, res, next) => {
   let header = req.get("authorization");
-  // console.log(header);
   if (header) {
     var token = header.split(" ")[1];
-    // console.log(token);
     verify(token, process.env.SECRET, (err, decoded) => {
       if (err) {
         console.log("ERROR IN CHECK_TOKEN ", err);
@@ -115,46 +112,24 @@ const checkToken = (req, res, next) => {
           message: err.message,
         });
       } else {
-        req.body.userId = decoded.id;
+        if(decoded.isAdmin) {
+          req.body.adminId = decoded.id;
+        } else {
+          req.body.userId = decoded.id;
+        }
         next();
       }
     });
   } else {
-    return res.json({
+    return res.status(400).json({
       success: false,
       message: "Access denied! Unauthorized user",
     });
   }
 };
 
-// const isAdmin = (req, res, next) => {
-//   let header = req.get("authorization");
-//   // console.log(header);
-//   if (header) {
-//     var token = header.split(" ")[1];
-//     // console.log(token);
-//     verify(token, process.env.SECRET, (err, decoded) => {
-//       if(err) {
-//         res.json({
-//           success: false,
-//           message: err.message
-//         })
-//       } else {
-//         console.log("decoded",decoded);
-//         next();
-//       }
-//     });
-//   } else {
-//     return res.json({
-//       success: false,
-//       message: "Access denied! Unauthorized user",
-//     });
-//   }
-// };
-
 module.exports = {
   signin,
   adminSignin,
-  checkToken,
-  // isAdmin,
+  checkToken
 };

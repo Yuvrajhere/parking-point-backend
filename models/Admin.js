@@ -30,11 +30,6 @@ const adminSchema = new mongoose.Schema({
     minLength: [20, "Password cannot be less than 20 characters."],
     required: [true, "Please provide password."]
   },
-  //the parking points created by this admin.
-  ParkingPoints: [{
-    type: mongoose.ObjectId,
-    ref: "ParkingPoint"
-  }]
 }, {timestamps: true});
 
 module.exports = mongoose.model("Admin", adminSchema);
