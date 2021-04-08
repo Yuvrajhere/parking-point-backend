@@ -99,7 +99,7 @@ const checkToken = (req, res, next) => {
     var token = header.split(" ")[1];
     verify(token, process.env.SECRET, (err, decoded) => {
       if (err) {
-        // console.log("ERROR IN CHECK_TOKEN ", err);
+        console.log("ERROR IN CHECK_TOKEN ", err);
         if (err.name == "TokenExpiredError") {
           return res.status(401).json({
             success: false,

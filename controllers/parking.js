@@ -41,6 +41,24 @@ const getParkingsByAdminId = (req, res) => {
     });
 };
 
+const getParkingsByParkingPointId = (req, res) => {
+  Parking.find({ parkingPoint: req.params.parkingPointId })
+    .then((parkings) => {
+      console.log(parkings)
+      res.status(200).json({
+        success: true,
+        data: parkings,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({
+        success: false,
+        message: "Failed to get Parkings!",
+      });
+    });
+}
+
 const getParkingById = (req, res) => {
   Parking.findOne({ _id: req.params.parkingId })
     .populate("parkingPoint")
@@ -99,6 +117,7 @@ const deleteParking = (req, res) => {
 module.exports = {
   addParking,
   getParkingsByAdminId,
+  getParkingsByParkingPointId,
   getParkingById,
   updateParking,
   deleteParking

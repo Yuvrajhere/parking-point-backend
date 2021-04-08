@@ -110,6 +110,7 @@ const deleteParkingPoint = (req, res) => {
 };
 
 const getParkingPointsByCity = (req, res) => {
+  console.log("Anyone looking for me?")
   ParkingPoint.find({ city: req.params.city.toLowerCase() }, function (err, parkingPoints) {
     if (err) {
       console.log(err);
