@@ -34,6 +34,7 @@ const addUser = (req, res) => {
       message: `Password length should be between 6 and 10!`,
     });
   }
+  
   const salt = genSaltSync(10);
   req.body.password = hashSync(req.body.password, salt);
   const user = new User(req.body);

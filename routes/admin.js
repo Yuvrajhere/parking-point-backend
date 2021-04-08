@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
 
-const { adminSignin } = require("../controllers/auth");
+const { adminSignin, checkToken } = require("../controllers/auth");
 const { getAdminById, addAdmin } = require("../controllers/admin");
 
-router.get("/admin/:adminId", getAdminById);
+router.get("/admin/", checkToken, getAdminById);
 
 router.post("/", addAdmin);
 

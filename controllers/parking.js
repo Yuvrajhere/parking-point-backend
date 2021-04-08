@@ -2,32 +2,16 @@ const Parking = require("../models/Parking");
 const ParkingPoint = require("../models/ParkingPoint");
 
 const addParking = (req, res) => {
-  console.log(req.body);
+  req.body.createdBy = req.body.adminId;
   const parking = new Parking(req.body);
   parking
     .save()
     .then((newParking) => {
-      // ParkingPoint.findOneAndUpdate(
-      //   { _id: req.body.parkingPoint },
-      //   { $push: { parkings: newParking._id } },
-      //   {
-      //     new: true,
-      //   }
-      // )
-      //   .then((response) => {
       res.status(200).json({
         success: true,
         data: newParking,
         message: "Parking saved successfully!",
       });
-      // })
-      // .catch((err) => {
-      //   console.log(err);
-      //   res.status(500).json({
-      //     success: false,
-      //     message: "Failed to save Parking!",
-      //   });
-      // });
     })
     .catch((err) => {
       console.log(err);
@@ -39,9 +23,10 @@ const addParking = (req, res) => {
 };
 
 const getParkingsByAdminId = (req, res) => {
-  Parking.find({ createdBy: req.params.adminId })
+  Parking.find({ createdBy: req.body.adminId })
     .populate("parkingPoint")
     .then((parkings) => {
+      console.log(parkings)
       res.status(200).json({
         success: true,
         data: parkings,
@@ -75,74 +60,6 @@ const getParkingById = (req, res) => {
 };
 
 const updateParking = (req, res) => {
-  console.log(req.body);
-
-  // const newParkingPoint = req.body.parkingPoint;
-
-  // req.body.parkingPoint = undefined;
-
-  // Parking.findOneAndUpdate({ _id: req.body._id }, req.body, { new: true })
-  //   .then((partialUpdatedParking) => {
-  //     const oldParkingPoint = partialUpdatedParking.parkingPoint;
-  //     const parkingId = partialUpdatedParking._id;
-
-  //     ParkingPoint.findByIdAndUpdate(
-  //       oldParkingPoint,
-  //       { $pull: { parkings: { parkingId } } },
-  //       { safe: true, upsert: true }
-  //     )
-  //       .then((response) => {
-  //         Parking.findOneAndUpdate(
-  //           { _id: req.body._id },
-  //           { parkingPoint: newParkingPoint },
-  //           { new: true }
-  //         )
-  //           .then((updatedParking) => {
-  //             ParkingPoint.findOneAndUpdate(
-  //               { _id: updateParking.parkingPoint },
-  //               { $push: { parkings: updateParking._id } },
-  //               {
-  //                 new: true,
-  //               }
-  //             )
-  //               .then((response) => {
-  //                 res.status(200).json({
-  //                   success: true,
-  //                   data: updatedParking,
-  //                   message: "Parking updated successfully!",
-  //                 });
-  //               })
-  //               .catch((err) => {
-  //                 console.log(err);
-  //                 res.status(500).json({
-  //                   success: false,
-  //                   message: "Failed to update Parking Point!",
-  //                 });
-  //               });
-  //           })
-  //           .catch((err) => {
-  //             console.log(err);
-  //             res.status(500).json({
-  //               success: false,
-  //               message: "Failed to update Parking Point!",
-  //             });
-  //           });
-  //       })
-  //       .catch((err) => {
-  //         console.log(err);
-  //         res.status(500).json({
-  //           success: false,
-  //           message: "Failed to update Parking Point!",
-  //         });
-  //       });
-  //   })
-  //   .catch((err) => {
-  //     console.log(err);
-  //     res.status(500).json({
-  //       success: false,
-  //       message: "Failed to update Parking Point!",
-  //     });
-  //   });
   Parking.findByIdAndUpdate(req.body._id, req.body, {
     new: true,
   })

@@ -9,27 +9,27 @@ const parkingPointSchema = new mongoose.Schema({
   },
   addressLine1: {
     type: String,
-    minLength: [1, "address line 1 length should be between 3 and 30."],
+    minLength: [3, "address line 1 length should be between 3 and 30."],
     maxLength: [30, "address line 1 length should be between 3 and 30."],
     required: [true, "Please provide address line 1."]
   },
   addressLine2: {
     type: String,
-    minLength: [1, "address line 2 length should be between 3 and 30."],
+    minLength: [3, "address line 2 length should be between 3 and 30."],
     maxLength: [30, "address line 2 length should be between 3 and 30."],
     required: [true, "Please provide address line 2."]
   },
-  city: {
-    type: String,
-    minLength: [1, "city length should be between 1 and 20."],
-    maxLength: [20, "city length should be between 1 and 20."],
-    required: [true, "Please provide city."]
-  },
   state: {
     type: String,
-    minLength: [3, "state length should be between 3 and 12."],
-    maxLength: [12, "state length should be between 3 and 12."],
-    required: [true, "Please provide state."]
+    minLength: [3, "state length should be between 3 and 20."],
+    maxLength: [20, "state length should be between 3 and 20."],
+    required: [true, "Please provide state."],
+  },
+  city: {
+    type: String,
+    minLength: [3, "city length should be between 1 and 20."],
+    maxLength: [20, "city length should be between 1 and 20."],
+    required: [true, "Please provide city."]
   },
   pincode: {
     type: String,
@@ -37,10 +37,6 @@ const parkingPointSchema = new mongoose.Schema({
     maxLength: [6, "pincode length should be exactly 6."],
     required: [true, "Please provide pincode."]
   },
-  parkings: [{
-    type: mongoose.ObjectId,
-    ref: "Parking"
-  }],
   latitude: {
     type: Number,
     min: [-90, "latitude value should be between -90 and 90."],
@@ -61,8 +57,8 @@ const parkingPointSchema = new mongoose.Schema({
   },
   phone: {
     type: String,
-    minLength: [12, "Phone number length should be 12 digits."],
-    maxLength: [12, "Phone number length should be 12 digits."],
+    minLength: [10, "Phone number length should be 10 digits."],
+    maxLength: [10, "Phone number length should be 10 digits."],
     required: [true, "Please provide Phone number."]
   },
   createdBy: {
