@@ -32,11 +32,13 @@ const userRouter = require("./routes/user");
 const adminRouter = require("./routes/admin");
 const parkingPointRouter = require("./routes/parkingPoint");
 const parkingRouter = require("./routes/parking");
+const bookingRouter = require("./routes/booking");
 
 app.use("/api/users", userRouter);
 app.use("/api/admins", adminRouter);
 app.use("/api/parkingpoints", parkingPointRouter);
 app.use("/api/parkings", parkingRouter);
+app.use("/api/bookings", bookingRouter);
 
 app.use(helper.notFound);
 app.use(helper.errorHandler);

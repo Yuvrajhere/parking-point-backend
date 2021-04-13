@@ -9,13 +9,6 @@ const bookingSchema = new mongoose.Schema({
     type: Date,
     required: [true, "Please provide departure date and time."]
   },
-  // entryDate: Date,
-  // exitDate: Date,
-  // panelty: {
-  //   type: Number,
-  //   min: [5, "panelty should be between 5 and 5000."],
-  //   max: [5000, "panelty should be between 5 and 5000."],
-  // },
   price: {
     type: Number,
     min: [5, "price should be between 5 and 5000."],
@@ -31,6 +24,11 @@ const bookingSchema = new mongoose.Schema({
     ref: "Parking",
     required: [true, "Please provide Parking ID."]
   },
+  bookedBy: {
+    type: mongoose.ObjectId,
+    ref: "User",
+    required: [true, "Please provide User ID."]
+  }
 }, {timestamps: true});
 
 module.exports = mongoose.model("Booking", bookingSchema);

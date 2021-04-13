@@ -1,5 +1,4 @@
 const Parking = require("../models/Parking");
-const ParkingPoint = require("../models/ParkingPoint");
 
 const addParking = (req, res) => {
   req.body.createdBy = req.body.adminId;
