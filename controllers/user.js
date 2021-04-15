@@ -13,13 +13,7 @@ const getUserById = (req, res) => {
       },
     })
     .populate({
-      path: "savedParking",
-      populate: {
-        path: "parking",
-        populate: {
-          path: "parkingPoint",
-        },
-      },
+      path: "savedParkingPoints",
     })
     .then((user) => {
       let tempBooking = user.booking.reverse();
@@ -40,21 +34,37 @@ const getUserById = (req, res) => {
 };
 
 const addParkingPointToSaved = (req, res) => {
-  User.findByIdAndUpdate(req.body.userId, {
-    $push: { savedParkingPoints: req.body.parkingPointId },
-  })
-    .then((newUser) => {
-      res.status(200).json({
-        success: true,
-        data: newBooking,
-        message: "Booking saved successfully!",
-      });
+  User.findById(req.body.userId)
+    .then((user) => {
+      if (user.savedParkingPoints.includes(req.body.parkingPointId)) {
+        return res.status(409).json({
+          success: false,
+          message: "Parking Point already saved!",
+        });
+      }
+
+      User.findByIdAndUpdate(req.body.userId, {
+        $push: { savedParkingPoints: req.body.parkingPointId },
+      })
+        .then((newUser) => {
+          res.status(200).json({
+            success: true,
+            message: "Parking Point saved successfully!",
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          res.status(500).json({
+            success: false,
+            message: "Failed to save Parking Point!",
+          });
+        });
     })
     .catch((err) => {
       console.log(err);
       res.status(500).json({
         success: false,
-        message: "Failed to save Booking!",
+        message: "Failed to save Parking Point!",
       });
     });
 };
@@ -177,4 +187,5 @@ module.exports = {
   getUserById,
   addUser,
   updateUserById,
+  addParkingPointToSaved,
 };
