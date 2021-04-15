@@ -3,7 +3,27 @@ const { genSaltSync, hashSync } = require("bcrypt");
 
 const getUserById = (req, res) => {
   User.findOne({ _id: req.body.userId })
+    .populate({
+      path: "booking",
+      populate: {
+        path: "parking",
+        populate: {
+          path: "parkingPoint",
+        },
+      },
+    })
+    .populate({
+      path: "savedParking",
+      populate: {
+        path: "parking",
+        populate: {
+          path: "parkingPoint",
+        },
+      },
+    })
     .then((user) => {
+      let tempBooking = user.booking.reverse();
+      user.booking = tempBooking;
       user.password = undefined;
       res.status(200).json({
         success: true,
@@ -15,6 +35,26 @@ const getUserById = (req, res) => {
       res.status(500).json({
         success: false,
         message: "Failed to get User!",
+      });
+    });
+};
+
+const addParkingPointToSaved = (req, res) => {
+  User.findByIdAndUpdate(req.body.userId, {
+    $push: { savedParkingPoints: req.body.parkingPointId },
+  })
+    .then((newUser) => {
+      res.status(200).json({
+        success: true,
+        data: newBooking,
+        message: "Booking saved successfully!",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({
+        success: false,
+        message: "Failed to save Booking!",
       });
     });
 };
@@ -34,7 +74,7 @@ const addUser = (req, res) => {
       message: `Password length should be between 6 and 10!`,
     });
   }
-  
+
   const salt = genSaltSync(10);
   req.body.password = hashSync(req.body.password, salt);
   const user = new User(req.body);
